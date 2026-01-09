@@ -10,13 +10,15 @@ Thoughtful is a small web app that lets you create ideas and list them in a clea
 ```bash
 git clone https://github.com/Space-Banane/thoughtful.git
 cd thoughtful
+cp .env.sample .env
+# Edit .env with your MongoDB connection string and cookie domain
 docker-compose up -d
 ```
 
 ### 2. Manual Setup
 #### Prerequisites
 - Node.js (v22)
-- npm (v9)
+- pnpm
 - MongoDB
 
 #### Steps
@@ -24,14 +26,18 @@ docker-compose up -d
 git clone https://github.com/Space-Banane/thoughtful.git
 cd thoughtful
 
+# Configure environment variables
+cp .env.sample .env
+# Edit .env with your MongoDB connection string and cookie domain
+
 cd frontend
-npm install
-npm run build
+pnpm install
+pnpm build
 cd ..
 
 cd backend
-npm install
-npm start
+pnpm install
+pnpm start
 ```
 
 ## 🚀 Usage
