@@ -7,3 +7,5 @@ services:
     command: sh -c "npm i -g pnpm && bash startup.sh"
     ports:
       - "8708:8080"
+    env_file:
+      - .env
