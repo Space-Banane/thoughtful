@@ -29,6 +29,16 @@ cd backend
 pnpm build
 cd ..
 
+## Copy environment variables file
+echo "Setting up environment variables..."
+if [ -f ".env" ]; then
+    cp .env backend/.env
+    cp .env frontend/.env
+else
+    echo ".env file not found! Please create one before proceeding."
+    exit 1
+fi
+
 echo "Setup completed successfully."
 
 # Start the application
