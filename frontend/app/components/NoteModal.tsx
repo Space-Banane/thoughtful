@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { LucideIcon } from "lucide-react";
 import { Lightbulb, Rocket, BookOpen, Heart, Code, Palette, Music, Camera, Zap, Star, Trophy, Target, Plus, Trash2, CheckSquare, Square } from "lucide-react";
 import Modal from "./Modal";
@@ -36,6 +36,18 @@ export default function NoteModal({ isOpen, onClose, note, onSave, onDelete }: N
   const [selectedIcon, setSelectedIcon] = useState<LucideIcon>(note?.icon || Lightbulb);
   const [todos, setTodos] = useState<TodoList[]>(note?.todos || []);
   const [resources, setResources] = useState<Resource[]>(note?.resources || []);
+
+  // Update form state when note prop or modal isOpen changes
+  useEffect(() => {
+    if (isOpen) {
+      setTitle(note?.title || "");
+      setDescription(note?.description || "");
+      setTags(note?.tags.join(", ") || "");
+      setSelectedIcon(note?.icon || Lightbulb);
+      setTodos(note?.todos || []);
+      setResources(note?.resources || []);
+    }
+  }, [isOpen, note]);
 
   const addTodoList = () => {
     if (todos.length < 5) {
