@@ -50,5 +50,8 @@ Create an account, log in, and start adding your ideas!
 - Backend: TypeScript, RJ-WEB
 - Database: MongoDB
 
+## Resources Used
+[Thought-Icon](https://www.flaticon.com/free-icons/thought-bubble) by Freepik - Flaticon
+
 ## Thanks
 Leave feedback and complain in the Issues page. Star if you like.
