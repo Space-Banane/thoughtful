@@ -1,0 +1,9 @@
+services:
+  notebook:
+    image: node:22
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: sh -c "npm i -g pnpm && bash startup.sh"
+    ports:
+      - "8708:8080"
