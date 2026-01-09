@@ -8,7 +8,7 @@ import Card from "~/components/Card";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Thoughtful - Your Personal Idea Notebook" },
-    { name: "description", content: "Capture, organize, and develop your ideas with Thoughtful - a beautiful notebook app with tags, images, and more." },
+    { name: "description", content: "Capture, organize, and develop your ideas with Thoughtful - a beautiful notebook app with tags, todos, and more." },
   ];
 }
 
@@ -27,7 +27,7 @@ export default function Home() {
     {
       icon: BookText,
       title: "Rich Content",
-      description: "Add descriptions, images, and detailed context to every idea.",
+      description: "Add descriptions, todos, and detailed context to every idea.",
     },
     {
       icon: Sparkles,
