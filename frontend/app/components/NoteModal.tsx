@@ -11,6 +11,7 @@ interface NoteModalProps {
   onClose: () => void;
   note?: Note;
   onSave: (note: Partial<Note>) => void;
+  onDelete?: (noteId: string) => void;
 }
 
 const iconOptions: { icon: LucideIcon; name: string }[] = [
@@ -28,7 +29,7 @@ const iconOptions: { icon: LucideIcon; name: string }[] = [
   { icon: Target, name: "Target" },
 ];
 
-export default function NoteModal({ isOpen, onClose, note, onSave }: NoteModalProps) {
+export default function NoteModal({ isOpen, onClose, note, onSave, onDelete }: NoteModalProps) {
   const [title, setTitle] = useState(note?.title || "");
   const [description, setDescription] = useState(note?.description || "");
   const [tags, setTags] = useState(note?.tags.join(", ") || "");
@@ -140,6 +141,15 @@ export default function NoteModal({ isOpen, onClose, note, onSave }: NoteModalPr
     setTodos(note?.todos || []);
     setResources(note?.resources || []);
     onClose();
+  };
+
+  const handleDelete = () => {
+    if (note && onDelete) {
+      if (window.confirm(`Are you sure you want to delete "${note.title}"? This action cannot be undone.`)) {
+        onDelete(note.id);
+        handleClose();
+      }
+    }
   };
   
   return (
@@ -342,13 +352,21 @@ export default function NoteModal({ isOpen, onClose, note, onSave }: NoteModalPr
         </div>
         
         {/* Actions */}
-        <div className="flex items-center justify-end space-x-3 pt-4 border-t border-[var(--color-border)]">
-          <Button type="button" variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button type="submit" variant="primary">
-            {note ? "Save Changes" : "Create Note"}
-          </Button>
+        <div className="flex items-center justify-between pt-4 border-t border-[var(--color-border)]">
+          {note && onDelete && (
+            <Button type="button" variant="secondary" onClick={handleDelete} className="text-red-500 hover:text-red-600 hover:bg-red-500/10">
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete Note
+            </Button>
+          )}
+          <div className="flex items-center space-x-3 ml-auto">
+            <Button type="button" variant="secondary" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary">
+              {note ? "Save Changes" : "Create Note"}
+            </Button>
+          </div>
         </div>
       </form>
     </Modal>

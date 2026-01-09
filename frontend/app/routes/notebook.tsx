@@ -95,6 +95,25 @@ export default function Notebook() {
     }
   };
 
+  const handleDeleteNote = async (noteId: string) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      await notebookService.deleteNote(noteId);
+      
+      // Remove the note from local state
+      setNotes(notes.filter(n => n.id !== noteId));
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error("Failed to delete note:", err);
+      setError(err instanceof Error ? err.message : "Failed to delete note");
+      alert(err instanceof Error ? err.message : "Failed to delete note");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const filteredNotes = notes.filter(note => {
     const query = searchQuery.toLowerCase();
     return (
@@ -204,6 +223,7 @@ export default function Notebook() {
         onClose={() => setIsModalOpen(false)}
         note={selectedNote}
         onSave={handleSaveNote}
+        onDelete={handleDeleteNote}
       />
     </Layout>
   );
