@@ -5,6 +5,7 @@ import { Lightbulb, Rocket, BookOpen, Heart, Code, Palette, Music, Camera, Zap, 
 import Modal from "./Modal";
 import Button from "./Button";
 import type { Note, TodoList, TodoItem, Resource } from "~/services/notebook";
+import { getAllStatuses, type StatusDefinition } from "~/services/status";
 
 interface NoteModalProps {
   isOpen: boolean;
@@ -34,8 +35,15 @@ export default function NoteModal({ isOpen, onClose, note, onSave, onDelete }: N
   const [description, setDescription] = useState(note?.description || "");
   const [tags, setTags] = useState(note?.tags.join(", ") || "");
   const [selectedIcon, setSelectedIcon] = useState<LucideIcon>(note?.icon || Lightbulb);
+  const [selectedStatusId, setSelectedStatusId] = useState<string | undefined>(note?.statusId);
+  const [statuses, setStatuses] = useState<StatusDefinition[]>([]);
   const [todos, setTodos] = useState<TodoList[]>(note?.todos || []);
   const [resources, setResources] = useState<Resource[]>(note?.resources || []);
+
+  // Load statuses
+  useEffect(() => {
+    getAllStatuses().then(setStatuses);
+  }, []);
 
   // Update form state when note prop or modal isOpen changes
   useEffect(() => {
@@ -44,6 +52,7 @@ export default function NoteModal({ isOpen, onClose, note, onSave, onDelete }: N
       setDescription(note?.description || "");
       setTags(note?.tags.join(", ") || "");
       setSelectedIcon(note?.icon || Lightbulb);
+      setSelectedStatusId(note?.statusId);
       setTodos(note?.todos || []);
       setResources(note?.resources || []);
     }
@@ -135,6 +144,7 @@ export default function NoteModal({ isOpen, onClose, note, onSave, onDelete }: N
       description,
       tags: parsedTags,
       icon: selectedIcon,
+      statusId: selectedStatusId,
       todos: todos.filter(todo => todo.title.trim()),
       resources: resources.filter(resource => resource.name.trim() && resource.link.trim()),
       updatedAt: new Date(),
@@ -150,6 +160,7 @@ export default function NoteModal({ isOpen, onClose, note, onSave, onDelete }: N
     setDescription(note?.description || "");
     setTags(note?.tags.join(", ") || "");
     setSelectedIcon(note?.icon || Lightbulb);
+    setSelectedStatusId(note?.statusId);
     setTodos(note?.todos || []);
     setResources(note?.resources || []);
     onClose();
@@ -218,6 +229,41 @@ export default function NoteModal({ isOpen, onClose, note, onSave, onDelete }: N
             placeholder="design, mobile, ui/ux (comma separated)"
           />
           <p className="mt-1 text-xs text-[var(--color-text-tertiary)]">Separate tags with commas (max 5)</p>
+        </div>
+
+        {/* Status Selector */}
+        <div>
+          <label htmlFor="status" className="block text-sm font-medium text-[var(--color-text-primary)] mb-2">
+            Status
+          </label>
+          <select
+            id="status"
+            value={selectedStatusId || ""}
+            onChange={(e) => setSelectedStatusId(e.target.value || undefined)}
+            className="w-full px-4 py-2 bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] rounded-lg text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent"
+          >
+            <option value="">No Status</option>
+            {statuses.map((status) => (
+              <option key={status.id} value={status.id}>
+                {status.name}
+              </option>
+            ))}
+          </select>
+          {selectedStatusId && (
+            <div className="mt-2 flex items-center gap-2">
+              <div
+                className="w-3 h-3 rounded-full"
+                style={{
+                  backgroundColor:
+                    statuses.find((s) => s.id === selectedStatusId)?.color ||
+                    "#6b7280",
+                }}
+              />
+              <span className="text-xs text-[var(--color-text-secondary)]">
+                {statuses.find((s) => s.id === selectedStatusId)?.name}
+              </span>
+            </div>
+          )}
         </div>
         
         {/* Icon Selector */}

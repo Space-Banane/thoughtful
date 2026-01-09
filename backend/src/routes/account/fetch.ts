@@ -18,6 +18,7 @@ export = new fileRouter.Path("/").http("GET", "/api/account/fetch", (http) =>
       user: {
         ...auth.user,
         passwordHash: undefined, // nukes sensitive info
+        statusDefinitions: auth.user.statusDefinitions || [],
       },
     });
   })

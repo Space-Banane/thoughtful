@@ -21,6 +21,7 @@ export = new fileRouter.Path("/").http(
           description: z.string().min(1).max(5000),
           tags: z.array(z.string()).max(5).default([]),
           icon: z.string().default("Lightbulb"),
+          statusId: z.string().optional(),
           todos: z.array(
             z.object({
               id: z.string(),
@@ -58,6 +59,7 @@ export = new fileRouter.Path("/").http(
         description: data.description,
         tags: data.tags,
         icon: data.icon,
+        statusId: data.statusId,
         todos: data.todos,
         resources: data.resources,
         createdAt: now,

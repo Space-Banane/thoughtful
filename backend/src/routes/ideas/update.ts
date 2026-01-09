@@ -22,6 +22,7 @@ export = new fileRouter.Path("/").http(
           description: z.string().min(1).max(5000).optional(),
           tags: z.array(z.string()).max(5).optional(),
           icon: z.string().optional(),
+          statusId: z.string().optional(),
           todos: z.array(
             z.object({
               id: z.string(),
@@ -71,6 +72,7 @@ export = new fileRouter.Path("/").http(
       if (data.icon !== undefined) updateData.icon = data.icon;
       if (data.todos !== undefined) updateData.todos = data.todos;
       if (data.resources !== undefined) updateData.resources = data.resources;
+      if (data.statusId !== undefined) updateData.statusId = data.statusId;
 
       // Update the idea
       const res = await db.collection("ideas").updateOne(

@@ -24,6 +24,7 @@ export interface Note {
   description: string;
   tags: string[];
   icon: LucideIcon;
+  statusId?: string;
   todos: TodoList[];
   resources: Resource[];
   createdAt: Date;
@@ -35,6 +36,7 @@ export interface CreateNoteDto {
   description: string;
   tags: string[];
   icon: string;
+  statusId?: string;
   todos: TodoList[];
   resources: Resource[];
 }
@@ -45,6 +47,7 @@ interface IdeaResponse {
   description: string;
   tags: string[];
   icon: string;
+  statusId?: string;
   todos: TodoList[];
   resources: Resource[];
   createdAt: string;
@@ -86,6 +89,7 @@ function parseIdea(idea: IdeaResponse): Note {
     description: idea.description,
     tags: idea.tags,
     icon: getIconFromName(idea.icon),
+    statusId: idea.statusId,
     todos: idea.todos || [],
     resources: idea.resources || [],
     createdAt: new Date(idea.createdAt),
@@ -113,8 +117,21 @@ export const notebookService = {
     return parseIdea(result.idea);
   },
 
-  async listNotes(): Promise<Note[]> {
-    const response = await fetch(`${API_BASE}/api/ideas/list`, {
+  async listNotes(params?: {
+    statusId?: string;
+    sortBy?: "createdAt" | "updatedAt" | "title";
+    sortOrder?: "asc" | "desc";
+  }): Promise<Note[]> {
+    const queryParams = new URLSearchParams();
+    if (params?.statusId) queryParams.append("statusId", params.statusId);
+    if (params?.sortBy) queryParams.append("sortBy", params.sortBy);
+    if (params?.sortOrder) queryParams.append("sortOrder", params.sortOrder);
+
+    const url = `${API_BASE}/api/ideas/list${
+      queryParams.toString() ? `?${queryParams.toString()}` : ""
+    }`;
+
+    const response = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

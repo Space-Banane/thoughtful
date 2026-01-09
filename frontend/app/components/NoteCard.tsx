@@ -1,6 +1,9 @@
 import type { Note } from "~/services/notebook";
 import Card from "./Card";
 import { CheckSquare, Link as LinkIcon } from "lucide-react";
+import { getAllStatuses, getStatusById, UNKNOWN_STATUS } from "~/services/status";
+import { useEffect, useState } from "react";
+import type { StatusDefinition } from "~/services/status";
 
 interface NoteCardProps {
   note: Note;
@@ -9,6 +12,18 @@ interface NoteCardProps {
 
 export default function NoteCard({ note, onClick }: NoteCardProps) {
   const Icon = note.icon;
+  const [status, setStatus] = useState<StatusDefinition | null>(null);
+
+  useEffect(() => {
+    // Load statuses and find current status
+    getAllStatuses().then((loadedStatuses) => {
+      if (note.statusId === "deleted") {
+        setStatus(UNKNOWN_STATUS);
+      } else if (note.statusId) {
+        setStatus(getStatusById(loadedStatuses, note.statusId));
+      }
+    });
+  }, [note.statusId]);
   
   // Calculate unfinished todos
   const unfinishedTodos = note.todos.reduce((total, list) => {
@@ -27,6 +42,17 @@ export default function NoteCard({ note, onClick }: NoteCardProps) {
             <h3 className="text-lg font-semibold text-[var(--color-text-primary)] line-clamp-2">
               {note.title}
             </h3>
+            {status && (
+              <div className="flex items-center gap-2 mt-1">
+                <div
+                  className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: status.color }}
+                />
+                <span className="text-xs font-medium" style={{ color: status.color }}>
+                  {status.name}
+                </span>
+              </div>
+            )}
           </div>
         </div>
         

@@ -25,6 +25,7 @@ export = new fileRouter.Path("/").http(
         user: {
           id: auth.user.id,
           username: auth.user.username,
+          statusDefinitions: auth.user.statusDefinitions || [],
         },
         ideas: ideas.map((idea) => ({
           id: idea.id,
@@ -32,6 +33,7 @@ export = new fileRouter.Path("/").http(
           description: idea.description,
           tags: idea.tags,
           icon: idea.icon,
+          statusId: idea.statusId,
           image: idea.image,
           createdAt: idea.createdAt,
           updatedAt: idea.updatedAt,
