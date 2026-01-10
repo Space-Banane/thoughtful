@@ -195,7 +195,7 @@ export default function Notebook() {
               disabled={!loggedIn}
             >
               <Plus className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform" />
-              New Note
+              New Idea
             </Button>
           </div>
 
@@ -206,7 +206,7 @@ export default function Notebook() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search notes by title, description, or tags..."
+              placeholder="Search ideas by title, description, or tags..."
               className="w-full pl-12 pr-4 py-3 bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent"
               disabled={!loggedIn}
             />
@@ -306,7 +306,7 @@ export default function Notebook() {
             <div className="w-20 h-20 bg-[var(--color-bg-secondary)] rounded-full flex items-center justify-center mx-auto mb-4 border border-[var(--color-border)] animate-pulse">
               <Search className="w-10 h-10 text-[var(--color-text-tertiary)]" />
             </div>
-            <p className="text-[var(--color-text-secondary)]">Loading notes...</p>
+            <p className="text-[var(--color-text-secondary)]">Loading ideas...</p>
           </div>
         ) : filteredNotes.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -324,17 +324,17 @@ export default function Notebook() {
               <Search className="w-10 h-10 text-[var(--color-text-tertiary)]" />
             </div>
             <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-2">
-              No notes found
+              No ideas found
             </h3>
             <p className="text-[var(--color-text-secondary)] mb-6">
               {searchQuery
                 ? "Try adjusting your search terms"
-                : "Start by creating your first note"}
+                : "Start by creating your first idea"}
             </p>
             {!searchQuery && (
               <Button onClick={handleCreateNote}>
                 <Plus className="w-5 h-5 mr-2" />
-                Create Your First Note
+                Create Your First Idea
               </Button>
             )}
           </div>
