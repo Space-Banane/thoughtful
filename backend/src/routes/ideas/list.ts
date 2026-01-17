@@ -16,7 +16,7 @@ export = new fileRouter.Path("/").http(
 
       // Get query parameters for filtering and sorting
       const statusId = ctr.queries.get("statusId");
-      const sortBy = ctr.queries.get("sortBy") || "updatedAt"; // createdAt, updatedAt, title
+      const sortBy = ctr.queries.get("sortBy") || "updatedAt"; // createdAt, updatedAt, title, statusId
       const sortOrder = ctr.queries.get("sortOrder") || "desc"; // asc, desc
 
       // Build filter query
@@ -31,6 +31,8 @@ export = new fileRouter.Path("/").http(
         sort.title = sortOrder === "asc" ? 1 : -1;
       } else if (sortBy === "createdAt") {
         sort.createdAt = sortOrder === "asc" ? 1 : -1;
+      } else if (sortBy === "statusId") {
+        sort.statusId = sortOrder === "asc" ? 1 : -1;
       } else {
         sort.updatedAt = sortOrder === "asc" ? 1 : -1;
       }

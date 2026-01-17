@@ -119,7 +119,7 @@ export const notebookService = {
 
   async listNotes(params?: {
     statusId?: string;
-    sortBy?: "createdAt" | "updatedAt" | "title";
+    sortBy?: "createdAt" | "updatedAt" | "title" | "statusId";
     sortOrder?: "asc" | "desc";
   }): Promise<Note[]> {
     const queryParams = new URLSearchParams();

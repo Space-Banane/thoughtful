@@ -28,7 +28,7 @@ export default function Notebook() {
   // Filter and sort states
   const [statuses, setStatuses] = useState<StatusDefinition[]>([]);
   const [filterStatusId, setFilterStatusId] = useState<string>("");
-  const [sortBy, setSortBy] = useState<"createdAt" | "updatedAt" | "title">("updatedAt");
+  const [sortBy, setSortBy] = useState<"createdAt" | "updatedAt" | "title" | "statusId">("updatedAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [showUnknownWarning, setShowUnknownWarning] = useState(false);
 
@@ -48,7 +48,7 @@ export default function Notebook() {
       setError(null);
       const loadedNotes = await notebookService.listNotes({
         statusId: filterStatusId || undefined,
-        sortBy,
+        sortBy: sortBy as "createdAt" | "updatedAt" | "title" | "statusId",
         sortOrder,
       });
       setNotes(loadedNotes);
@@ -240,13 +240,14 @@ export default function Notebook() {
               <select
                 id="sort-by"
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as "createdAt" | "updatedAt" | "title")}
+                onChange={(e) => setSortBy(e.target.value as "createdAt" | "updatedAt" | "title" | "statusId")}
                 className="w-full px-4 py-2 bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-lg text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent"
                 disabled={!loggedIn}
               >
                 <option value="updatedAt">Last Updated</option>
                 <option value="createdAt">Date Created</option>
                 <option value="title">Title (A-Z)</option>
+                <option value="statusId">Status</option>
               </select>
             </div>
 
@@ -260,8 +261,12 @@ export default function Notebook() {
                 className="w-full px-4 py-2 bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-lg text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent"
                 disabled={!loggedIn}
               >
-                <option value="desc">{sortBy === "title" ? "Z → A" : "Newest First"}</option>
-                <option value="asc">{sortBy === "title" ? "A → Z" : "Oldest First"}</option>
+                <option value="desc">
+                  {sortBy === "title" ? "Z → A" : sortBy === "statusId" ? "Status First" : "Newest First"}
+                </option>
+                <option value="asc">
+                  {sortBy === "title" ? "A → Z" : sortBy === "statusId" ? "Status Last" : "Oldest First"}
+                </option>
               </select>
             </div>
           </div>
