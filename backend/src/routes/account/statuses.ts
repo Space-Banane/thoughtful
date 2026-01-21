@@ -8,7 +8,7 @@ export = new fileRouter.Path("/")
     http.onRequest(async (ctr) => {
       const cookie = ctr.cookies.get("thoughtful_session") || null;
       const apiHeader = (ctr.headers && ctr.headers.get)
-        ? ctr.headers.get("API-Authentication") || null
+        ? ctr.headers.get("api-authentication") || null
         : null;
       const auth = await authCheck(cookie, apiHeader);
       if (!auth.state) {
@@ -34,7 +34,7 @@ export = new fileRouter.Path("/")
     http.onRequest(async (ctr) => {
       const cookie = ctr.cookies.get("thoughtful_session") || null;
       const apiHeader = (ctr.headers && ctr.headers.get)
-        ? ctr.headers.get("API-Authentication") || null
+        ? ctr.headers.get("api-authentication") || null
         : null;
       const auth = await authCheck(cookie, apiHeader);
       if (!auth.state) {
@@ -117,7 +117,7 @@ export = new fileRouter.Path("/")
     http.onRequest(async (ctr) => {
       const cookie = ctr.cookies.get("thoughtful_session") || null;
       const apiHeader = (ctr.headers && ctr.headers.get)
-        ? ctr.headers.get("API-Authentication") || null
+        ? ctr.headers.get("api-authentication") || null
         : null;
       const auth = await authCheck(cookie, apiHeader);
       if (!auth.state) {
@@ -188,7 +188,7 @@ new fileRouter.Path("/").http(
     http.onRequest(async (ctr) => {
       const cookie = ctr.cookies.get("thoughtful_session") || null;
       const apiHeader = (ctr.headers && ctr.headers.get)
-        ? ctr.headers.get("API-Authentication") || null
+        ? ctr.headers.get("api-authentication") || null
         : null;
       const auth = await authCheck(cookie, apiHeader);
       if (!auth.state) {
@@ -253,7 +253,7 @@ new fileRouter.Path("/").http(
     http.onRequest(async (ctr) => {
       const cookie = ctr.cookies.get("thoughtful_session") || null;
       const apiHeader = (ctr.headers && ctr.headers.get)
-        ? ctr.headers.get("API-Authentication") || null
+        ? ctr.headers.get("api-authentication") || null
         : null;
       const auth = await authCheck(cookie, apiHeader);
       if (!auth.state) {
