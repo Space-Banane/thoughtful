@@ -15,6 +15,14 @@ interface User {
   username: string;
   passwordHash: string;
   statusDefinitions?: StatusDefinition[];
+  apiKeys?: ApiKey[];
+}
+
+interface ApiKey {
+  id: string;
+  description: string;
+  keyHash: string; // sha256 of the raw key
+  createdAt: Date;
 }
 
 interface TodoItem {

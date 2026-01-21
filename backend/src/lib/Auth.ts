@@ -1,5 +1,6 @@
 import { db } from "..";
 import { Session, User } from "../types";
+import crypto from "crypto";
 
 interface AuthCheckResultBase {
   state: boolean;
@@ -18,7 +19,33 @@ interface AuthCheckFailure extends AuthCheckResultBase {
 
 type AuthCheckResult = AuthCheckSuccess | AuthCheckFailure;
 
-export async function authCheck(cookie: string | null): Promise<AuthCheckResult> {
+export async function authCheck(
+  cookie: string | null,
+  apiHeader: string | null = null
+): Promise<AuthCheckResult> {
+  // If API header provided, try API key auth first
+  if (apiHeader) {
+    try {
+      const hash = crypto.createHash("sha256").update(apiHeader).digest("hex");
+      const userByKey = await db
+        .collection<User>("users")
+        .findOne({ "apiKeys.keyHash": hash });
+
+      if (userByKey) {
+        // find the apiKey id
+        const found = (userByKey.apiKeys || []).find((k) => k.keyHash === hash);
+        return {
+          state: true,
+          message: "Authenticated via API key",
+          userId: userByKey.id,
+          user: userByKey,
+        };
+      }
+    } catch (e) {
+      // fall through to session-based auth
+    }
+  }
+
   if (!cookie) {
     return { state: false, message: "No Cookie Provided" };
   }

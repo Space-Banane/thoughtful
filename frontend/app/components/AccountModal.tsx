@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Download, Trash2, X, Plus, Edit2, Palette } from "lucide-react";
 import Modal from "./Modal";
 import Button from "./Button";
-import { deleteAccount, downloadAccountData } from "../services/account";
+import { deleteAccount, downloadAccountData, listApiKeys, createApiKey, deleteApiKey } from "../services/account";
 import {
   getAllStatuses,
   getCustomStatuses,
@@ -27,7 +27,7 @@ export default function AccountModal({
   username,
   onAccountDeleted,
 }: AccountModalProps) {
-  const [activeTab, setActiveTab] = useState<"general" | "statuses">("general");
+  const [activeTab, setActiveTab] = useState<"general" | "statuses" | "apiKeys">("general");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -45,16 +45,36 @@ export default function AccountModal({
     count: number;
   } | null>(null);
 
+  // API Keys state
+  const [apiKeys, setApiKeys] = useState<Array<{ id: string; description: string; createdAt: string }>>([]);
+  const [newKeyDescription, setNewKeyDescription] = useState("");
+  const [isCreatingKey, setIsCreatingKey] = useState(false);
+  const [createdToken, setCreatedToken] = useState<string | null>(null);
+
   // Load custom statuses
   useEffect(() => {
     if (isOpen && activeTab === "statuses") {
       loadCustomStatuses();
+    }
+    if (isOpen && activeTab === "apiKeys") {
+      loadApiKeys();
     }
   }, [isOpen, activeTab]);
 
   const loadCustomStatuses = async () => {
     const statuses = await getCustomStatuses();
     setCustomStatuses(statuses);
+  };
+
+  const loadApiKeys = async () => {
+    try {
+      const res = await listApiKeys();
+      if (res && res.apiKeys) {
+        setApiKeys(res.apiKeys.map((k: any) => ({ id: k.id, description: k.description, createdAt: new Date(k.createdAt).toISOString() })));
+      }
+    } catch (err) {
+      console.error("Failed to load API keys", err);
+    }
   };
 
   const handleDownloadData = async () => {
@@ -236,6 +256,16 @@ export default function AccountModal({
             }`}
           >
             Status Definitions
+          </button>
+          <button
+            onClick={() => setActiveTab("apiKeys")}
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === "apiKeys"
+                ? "border-[var(--color-accent)] text-[var(--color-accent)]"
+                : "border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
+            }`}
+          >
+            API Keys
           </button>
         </div>
 
@@ -523,6 +553,71 @@ export default function AccountModal({
                   No custom statuses yet. Add one above!
                 </p>
               )}
+            </div>
+          </>
+        )}
+
+        {/* API Keys Tab */}
+        {activeTab === "apiKeys" && (
+          <>
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">API Keys</h3>
+              <p className="text-sm text-[var(--color-text-secondary)]">Create and manage API keys for programmatic access. Keys must have a description. Limit: 4 keys.</p>
+
+              {/* Create Key */}
+              <div className="p-4 bg-[var(--color-bg-secondary)] rounded-lg border border-[var(--color-border)] space-y-2">
+                <label className="text-sm font-medium">Description</label>
+                <input className="w-full px-3 py-2 bg-[var(--color-bg-primary)] border border-[var(--color-border)] rounded" value={newKeyDescription} onChange={(e) => setNewKeyDescription(e.target.value)} />
+                <div className="flex gap-3">
+                  <Button onClick={async () => {
+                    if (!newKeyDescription.trim()) { setError("Description required"); return; }
+                    setIsCreatingKey(true); setError(null); setCreatedToken(null);
+                    try {
+                      const res = await createApiKey(newKeyDescription.trim());
+                      if (res && res.apiKey && res.apiKey.token) {
+                        setCreatedToken(res.apiKey.token);
+                        setNewKeyDescription("");
+                        await loadApiKeys();
+                      } else if (res && res.error) {
+                        setError(res.error);
+                      }
+                    } catch (err) {
+                      setError("Failed to create API key");
+                    } finally { setIsCreatingKey(false); }
+                  }} disabled={isCreatingKey} className="flex-1">
+                    <Plus className="w-4 h-4 mr-2" />{isCreatingKey ? "Creating..." : "Create Key"}
+                  </Button>
+                </div>
+
+                {createdToken && (
+                  <div className="p-2 bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] rounded mt-2">
+                    <p className="text-xs text-[var(--color-text-secondary)] mb-1">Copy this token now — it will not be shown again.</p>
+                    <div className="flex gap-2">
+                      <input readOnly value={createdToken} className="flex-1 px-2 py-1 bg-[var(--color-bg-primary)] border border-[var(--color-border)] rounded" />
+                      <Button onClick={() => { navigator.clipboard?.writeText(createdToken); }} variant="secondary">Copy</Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* List Keys */}
+              <div className="space-y-2">
+                {apiKeys.length === 0 ? (
+                  <p className="text-sm text-[var(--color-text-secondary)]">No API keys found.</p>
+                ) : (
+                  apiKeys.map((k) => (
+                    <div key={k.id} className="p-3 bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded flex items-center justify-between">
+                      <div>
+                        <div className="font-medium">{k.description}</div>
+                        <div className="text-xs text-[var(--color-text-secondary)]">Created: {new Date(k.createdAt).toLocaleString()}</div>
+                      </div>
+                      <div>
+                        <Button variant="ghost" onClick={async () => { const res = await deleteApiKey(k.id); if (res && res.success) { await loadApiKeys(); } else { setError(res.error || "Failed to delete key"); } }}><Trash2 className="w-4 h-4" /></Button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           </>
         )}

@@ -7,9 +7,11 @@ export = new fileRouter.Path("/").http(
   (http) =>
     http.onRequest(async (ctr) => {
       // Check authentication
-      const auth = await authCheck(
-        ctr.cookies.get("thoughtful_session") || null
-      );
+      const cookie = ctr.cookies.get("thoughtful_session") || null;
+      const apiHeader = (ctr.headers && ctr.headers.get)
+        ? ctr.headers.get("API-Authentication") || null
+        : null;
+      const auth = await authCheck(cookie, apiHeader);
       if (!auth.state) {
         return ctr.status(ctr.$status.UNAUTHORIZED).print({ error: auth.message });
       }

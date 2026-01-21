@@ -70,3 +70,29 @@ export async function downloadAccountData() {
     
     return { success: true };
 }
+
+export async function listApiKeys() {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/account/api-keys`, {
+        method: 'GET',
+        credentials: 'include',
+    });
+    return await response.json();
+}
+
+export async function createApiKey(description: string) {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/account/api-keys/create`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description }),
+    });
+    return await response.json();
+}
+
+export async function deleteApiKey(id: string) {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/account/api-keys/${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+    });
+    return await response.json();
+}

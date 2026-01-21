@@ -6,9 +6,11 @@ import { DEFAULT_STATUSES, StatusDefinition } from "../../types";
 export = new fileRouter.Path("/")
   .http("GET", "/api/account/statuses", (http) =>
     http.onRequest(async (ctr) => {
-      const auth = await authCheck(
-        ctr.cookies.get("thoughtful_session") || null
-      );
+      const cookie = ctr.cookies.get("thoughtful_session") || null;
+      const apiHeader = (ctr.headers && ctr.headers.get)
+        ? ctr.headers.get("API-Authentication") || null
+        : null;
+      const auth = await authCheck(cookie, apiHeader);
       if (!auth.state) {
         return ctr
           .status(ctr.$status.UNAUTHORIZED)
@@ -30,9 +32,11 @@ export = new fileRouter.Path("/")
   )
   .http("POST", "/api/account/statuses/save", (http) =>
     http.onRequest(async (ctr) => {
-      const auth = await authCheck(
-        ctr.cookies.get("thoughtful_session") || null
-      );
+      const cookie = ctr.cookies.get("thoughtful_session") || null;
+      const apiHeader = (ctr.headers && ctr.headers.get)
+        ? ctr.headers.get("API-Authentication") || null
+        : null;
+      const auth = await authCheck(cookie, apiHeader);
       if (!auth.state) {
         return ctr
           .status(ctr.$status.UNAUTHORIZED)
@@ -111,9 +115,11 @@ export = new fileRouter.Path("/")
   // DELETE /api/account/statuses/:id - Delete custom status definition
   .http("DELETE", "/api/account/statuses/{id}", (http) =>
     http.onRequest(async (ctr) => {
-      const auth = await authCheck(
-        ctr.cookies.get("thoughtful_session") || null
-      );
+      const cookie = ctr.cookies.get("thoughtful_session") || null;
+      const apiHeader = (ctr.headers && ctr.headers.get)
+        ? ctr.headers.get("API-Authentication") || null
+        : null;
+      const auth = await authCheck(cookie, apiHeader);
       if (!auth.state) {
         return ctr
           .status(ctr.$status.UNAUTHORIZED)
@@ -180,9 +186,11 @@ new fileRouter.Path("/").http(
   "/api/account/statuses/{id}/force-delete",
   (http) =>
     http.onRequest(async (ctr) => {
-      const auth = await authCheck(
-        ctr.cookies.get("thoughtful_session") || null
-      );
+      const cookie = ctr.cookies.get("thoughtful_session") || null;
+      const apiHeader = (ctr.headers && ctr.headers.get)
+        ? ctr.headers.get("API-Authentication") || null
+        : null;
+      const auth = await authCheck(cookie, apiHeader);
       if (!auth.state) {
         return ctr
           .status(ctr.$status.UNAUTHORIZED)
@@ -243,9 +251,11 @@ new fileRouter.Path("/").http(
   "/api/account/statuses/fix-unknown",
   (http) =>
     http.onRequest(async (ctr) => {
-      const auth = await authCheck(
-        ctr.cookies.get("thoughtful_session") || null
-      );
+      const cookie = ctr.cookies.get("thoughtful_session") || null;
+      const apiHeader = (ctr.headers && ctr.headers.get)
+        ? ctr.headers.get("API-Authentication") || null
+        : null;
+      const auth = await authCheck(cookie, apiHeader);
       if (!auth.state) {
         return ctr
           .status(ctr.$status.UNAUTHORIZED)
