@@ -18,6 +18,15 @@ export = new fileRouter.Path("/").http(
       if (!data)
         return ctr.status(ctr.$status.BAD_REQUEST).print(error.toString());
 
+      // Check if username is taken
+      const existingUser = await db.collection("users").findOne({
+        username: data.username,
+      });
+
+      if (existingUser) {
+        return ctr.status(ctr.$status.BAD_REQUEST).print({ error: "Username already taken" });
+      }
+
       const id = crypto.randomUUID();
       const res = await db.collection("users").insertOne({
         id,
